@@ -3,16 +3,19 @@ mod node;
 mod node_index;
 mod edge;
 
-pub fn create_petri_net<N, E>() -> impl IPetriNet<N, E>{
+pub fn create_petri_net<N, E>() -> impl IPetriNet<N, E>
+    where N: serde::Serialize,
+          E: serde::Serialize{
     graph::Graph::new()
 }
 
-pub trait IPetriNet<N, E>{
+pub trait IPetriNet<N, E> {
     type NodeType: INode<N, E>;
     type NodeIndexType: INodeIndex;
     type EdgeType: IEdge<N, E>;
 
     fn add_node(&mut self, node_data: N) -> &Self::NodeType;
+    fn serialize(&self) -> String;
 }
 
 pub trait INode<N, E>{
