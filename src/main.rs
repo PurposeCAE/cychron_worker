@@ -1,6 +1,8 @@
 use petri_net::IPetriNet;
 use serde::{Serialize, Deserialize};
+
 mod petri_net;
+mod elements;
 
 fn main() {
     let mut petri_net = petri_net::create_petri_net::<Element, Binder>();
@@ -8,12 +10,10 @@ fn main() {
 
     let serialized_petri_net = petri_net.serialize();
     println!("{}", serialized_petri_net);
-
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Element{
-    name: String,
+    let step = elements::Step{
+        actions: Vec::new(),
+    };
+    let actions = step.actions;
 }
 
 #[derive(Serialize, Deserialize, Debug)]
