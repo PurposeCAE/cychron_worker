@@ -1,22 +1,32 @@
 use petri_net::IPetriNet;
-use serde::{Serialize, Deserialize};
+
+use crate::{step::{Step, IStep}, transition::{Transition, Condition}, device::{event::Event, action::Action}};
+use crate::transition::condition::EventDrivenCondition;
+use crate::device::Device;
+use crate::session::Session;
 
 mod petri_net;
-mod elements;
+mod step;
+mod transition;
+mod dependency_inversion;
+mod device;
+mod session;
 
 fn main() {
-    let mut petri_net = petri_net::create_petri_net::<Element, Binder>();
-    let node = petri_net.add_node(Element{name: "test".to_string()});
+    let mut session = Session::new();
+    let device1 = session.add_device("device1".to_string());
+    let action1 = device1.add_new_action("action1".to_string());
+    let event1 = action1.add_event("event1".to_string(), 1.0);
 
-    let serialized_petri_net = petri_net.serialize();
-    println!("{}", serialized_petri_net);
-    let step = elements::Step{
-        actions: Vec::new(),
-    };
-    let actions = step.actions;
-}
+    let transition = Transition{conditions: Condition::EEventDrivenCondition(EventDrivenCondition::new(event1))};
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Binder{
 
+    let step1 = Step::new();
+    let step2 = Step::new();
+
+    let node1 = session.petri_net.add_node(step1);
+    let node2 = session.petri_net.add_node(step2);
+
+    let serialized_petri_net = session.petri_net.serialize();
+    println!("{}", serialized_petri_net);    
 }

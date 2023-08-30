@@ -1,20 +1,27 @@
-mod graph;
+use crate::step;
+
+use super::step::IStep;
+use super::transition::ITransition;
+
+pub mod graph;
 mod node;
 mod node_index;
 mod edge;
 
-pub fn create_petri_net<N, E>() -> impl IPetriNet<N, E>
-    where N: serde::Serialize,
-          E: serde::Serialize{
+pub fn create_petri_net() -> impl IPetriNet<'static, NodeDataType = step::Step<'static>> {
     graph::Graph::new()
 }
 
-pub trait IPetriNet<N, E> {
-    type NodeType: INode<N, E>;
+pub trait IPetriNet<'a> {
+    type NodeType: INode<Self::NodeDataType, Self::EdgeDataType>;
+    type NodeDataType: IStep<'a>;
     type NodeIndexType: INodeIndex;
-    type EdgeType: IEdge<N, E>;
 
-    fn add_node(&mut self, node_data: N) -> &Self::NodeType;
+    type EdgeType: IEdge<Self::NodeDataType, Self::EdgeDataType>;
+    type EdgeDataType: ITransition<'a>;
+
+    fn add_node(&mut self, node_data: Self::NodeDataType) -> &Self::NodeType;
+    fn add_edge(&mut self, parent: &Self::NodeType, child: &Self::NodeType, edge_data: Self::EdgeDataType) -> &Self::EdgeType;
     fn serialize(&self) -> String;
 }
 

@@ -1,6 +1,7 @@
 use super::INode;
 use super::edge::Edge;
 
+#[derive(Debug)]
 pub struct Node{
     node_index : petgraph::graph::NodeIndex,
 }
@@ -10,6 +11,9 @@ impl Node{
         Node{
             node_index
         }
+    }
+    pub fn get_node_index(&self) -> &petgraph::graph::NodeIndex{
+        &self.node_index
     }
 }
 
