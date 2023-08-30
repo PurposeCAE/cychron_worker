@@ -1,19 +1,17 @@
-use super::INodeIndex;
+
 
 pub struct NodeIndex{
-    index: <Self as INodeIndex>::CounterType,
+    index: u32,
 }
 
-impl INodeIndex for NodeIndex{
-    type CounterType = u32;
-
-    fn new(counter: &Self::CounterType) -> Self {
+impl NodeIndex{
+    fn new(counter: u32) -> Self {
         NodeIndex{
-            index: *counter,
+            index: counter,
         }
     }
 
-    fn get_counter(&self) -> &Self::CounterType {
-        &self.index
+    fn get_counter(&self) -> u32 {
+        self.index
     }
 }

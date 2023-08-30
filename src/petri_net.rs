@@ -1,43 +1,61 @@
-use crate::step;
+use serde::{Serialize, Deserialize};
 
-use super::step::IStep;
-use super::transition::ITransition;
+use crate::transition::Transition;
 
-pub mod graph;
+use self::edge::Edge;
+use self::node::Node;
+
+use super::step::Step;
+
 mod node;
 mod node_index;
 mod edge;
 
-pub fn create_petri_net() -> impl IPetriNet<'static, NodeDataType = step::Step<'static>> {
-    graph::Graph::new()
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PetriNet<'a> {
+    petgraph : petgraph::graph::Graph<Step, Transition<'a>>,
+
+    #[serde(skip)]
+    nodes: Vec<Node>,
+
+    #[serde(skip)]
+    edges: Vec<Edge>,
+
+    counter: u32,
 }
 
-pub trait IPetriNet<'a> {
-    type NodeType: INode<Self::NodeDataType, Self::EdgeDataType>;
-    type NodeDataType: IStep<'a>;
-    type NodeIndexType: INodeIndex;
+impl<'a> PetriNet<'a> {
+    pub fn new() -> PetriNet<'a> {
+        PetriNet{
+            petgraph: petgraph::graph::Graph::new(),
+            nodes: Vec::new(),
+            edges: Vec::new(),
+            counter: 0,
+        }
+    }
 
-    type EdgeType: IEdge<Self::NodeDataType, Self::EdgeDataType>;
-    type EdgeDataType: ITransition<'a>;
+    pub fn add_node(&mut self, node_data: Step) -> &Node {
 
-    fn add_node(&mut self, node_data: Self::NodeDataType) -> &Self::NodeType;
-    fn add_edge(&mut self, parent: &Self::NodeType, child: &Self::NodeType, edge_data: Self::EdgeDataType) -> &Self::EdgeType;
-    fn serialize(&self) -> String;
-}
+        let node_index = self.petgraph.add_node(node_data);
 
-pub trait INode<N, E>{
-    type EdgeType: IEdge<N, E>;
+        let node = Node::new(node_index);
 
-    fn get_parents<T>(&self) -> Vec<&Self::EdgeType>;
-    fn get_children<T>(&self) -> Vec<&Self::EdgeType>;
-}
-pub trait INodeIndex{
-    type CounterType: std::ops::Add<Output = Self::CounterType> + Copy + std::fmt::Debug;
+        self.nodes.push(node);
+        self.nodes.last().unwrap()
+    }
+    
+    pub fn serialize(&self) -> String{
+        let serialized_graph = serde_json::to_string_pretty(&self.petgraph).unwrap();
+        serialized_graph
+    }
 
-    fn new(counter: &Self::CounterType) -> Self;
-    fn get_counter(&self) -> &Self::CounterType;
-}
+    pub fn add_edge(&mut self, parent: &Node, child: &Node, edge_data: Transition<'a>) -> &Edge {
+        let child_node_index = child.get_node_index();
+        let parent_node_index = parent.get_node_index();
 
-pub trait IEdge<N, E>{
-
+        let edge_index = self.petgraph.add_edge(*parent_node_index, *child_node_index, edge_data);
+        self.edges.push(Edge{edge_index});
+        self.edges.last().unwrap()
+    }
 }

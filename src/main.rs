@@ -1,14 +1,10 @@
-use petri_net::IPetriNet;
-
-use crate::{step::{Step, IStep}, transition::{Transition, Condition}, device::{event::Event, action::Action}};
+use crate::{step::Step, transition::{Transition, Condition}};
 use crate::transition::condition::EventDrivenCondition;
-use crate::device::Device;
 use crate::session::Session;
 
 mod petri_net;
 mod step;
 mod transition;
-mod dependency_inversion;
 mod device;
 mod session;
 
@@ -19,7 +15,6 @@ fn main() {
     let event1 = action1.add_event("event1".to_string(), 1.0);
 
     let transition = Transition{conditions: Condition::EEventDrivenCondition(EventDrivenCondition::new(event1))};
-
 
     let step1 = Step::new();
     let step2 = Step::new();
