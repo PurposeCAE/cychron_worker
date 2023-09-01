@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use serde::{Serialize, Deserialize};
 
 use crate::transition::Transition;
@@ -7,17 +9,17 @@ use self::node::Node;
 
 use super::step::Step;
 
-mod node;
+pub mod node;
 mod node_index;
 mod edge;
 
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PetriNet<'a> {
-    petgraph : petgraph::graph::Graph<Step, Transition<'a>>,
+    petgraph : petgraph::graph::Graph<Step<'a>, Transition<'a>>,
 
     #[serde(skip)]
-    nodes: Vec<Node>,
+    nodes: Vec<Node<'a>>,
 
     #[serde(skip)]
     edges: Vec<Edge>,
@@ -35,14 +37,16 @@ impl<'a> PetriNet<'a> {
         }
     }
 
-    pub fn add_node(&mut self, node_data: Step) -> &Node {
+    pub fn add_node(&'a mut self, node_data: Step<'a>) -> &mut Node<'a> {
 
         let node_index = self.petgraph.add_node(node_data);
+        let node_data = &mut self.petgraph[node_index];
 
-        let node = Node::new(node_index);
+        let node = Node::new(node_index, node_data);
 
         self.nodes.push(node);
-        self.nodes.last().unwrap()
+        // self.nodes.last().unwrap()
+        self.nodes.last_mut().unwrap()
     }
     
     pub fn serialize(&self) -> String{
@@ -57,5 +61,9 @@ impl<'a> PetriNet<'a> {
         let edge_index = self.petgraph.add_edge(*parent_node_index, *child_node_index, edge_data);
         self.edges.push(Edge{edge_index});
         self.edges.last().unwrap()
+    }
+
+    pub fn get_node_data<'b>(&'a mut self, node_index: &'b petgraph::prelude::NodeIndex) -> &'a mut Step {
+        &mut self.petgraph[*node_index]
     }
 }

@@ -1,12 +1,16 @@
+use crate::step::Step;
+
 #[derive(Debug)]
-pub struct Node{
+pub struct Node<'a>{
     node_index : petgraph::graph::NodeIndex,
+    pub node_data : &'a mut Step<'a>,
 }
 
-impl Node{
-    pub fn new(node_index : petgraph::prelude::NodeIndex) -> Node{
+impl<'a> Node<'a>{
+    pub fn new(node_index : petgraph::prelude::NodeIndex, node_data: &'a mut Step<'a>) -> Node<'a>{
         Node{
-            node_index
+            node_index,
+            node_data,
         }
     }
 

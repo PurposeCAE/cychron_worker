@@ -1,8 +1,8 @@
 use std::collections::HashMap;
-
+use crate::petri_net::node::Node;
 use serde::{Serialize, Deserialize};
 
-use crate::{device::Device, petri_net::PetriNet};
+use crate::{device::Device, petri_net::PetriNet, step::{Step, self}};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Session<'a>{
@@ -11,7 +11,7 @@ pub struct Session<'a>{
     devices: HashMap<String, Device>,
 }
 
-impl Session<'_>{
+impl<'a> Session<'a>{
     pub fn new() -> Self{
         let petri_net = PetriNet::new();
         Session{
@@ -27,5 +27,12 @@ impl Session<'_>{
         self.devices.insert(device_id.clone(), device);
 
         self.devices.get_mut(&device_id).unwrap()
+    }
+
+    pub fn add_node(&'a mut self) ->&mut Node{
+        let step = Step::new();
+
+        self.petri_net
+            .add_node(step)
     }
 }
