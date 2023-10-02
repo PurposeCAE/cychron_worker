@@ -56,6 +56,10 @@ impl Session {
         event_idx
     }
 
+    pub fn get_petri_net(&mut self) -> &mut PetriNet {
+        &mut self.petri_net
+    }
+
     pub fn serialize_pretty(&self) -> String {
         let serde_result = serde_json::to_string_pretty(&self);
         let serialized_session = serde_result.unwrap();

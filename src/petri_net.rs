@@ -28,10 +28,15 @@ impl PetriNet {
     pub fn add_node(&mut self, step: Step) -> node_index::NodeIndex {
         let pet_node_index = self.petgraph.add_node(step);
         let node_index = node_index::NodeIndex::new(pet_node_index);
-
+        
         self.nodes.push(node_index.clone());
 
         node_index
+    }
+
+    pub fn get_mut_step(&mut self, node_index: &node_index::NodeIndex) -> Option<&mut Step> {
+        let pet_node_index = node_index.get_node_index();
+        self.petgraph.node_weight_mut(pet_node_index)
     }
 
     pub fn add_transition(

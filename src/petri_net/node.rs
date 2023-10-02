@@ -14,4 +14,3 @@ impl Node{
         &self.node_index
     }
 }
-

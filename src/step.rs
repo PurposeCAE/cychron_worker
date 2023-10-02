@@ -14,7 +14,7 @@ impl Step{
         }
     }
 
-    pub fn add_action(mut self, action_idx: Index<Action>) {
+    pub fn add_action(&mut self, action_idx: Index<Action>) {
         self.actions.push(action_idx);
     }
 }
