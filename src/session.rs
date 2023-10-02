@@ -61,26 +61,31 @@ impl Session {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Hash, Eq, PartialEq, Clone)]
-pub struct Index<T: ?Sized>(u32, PhantomData<T>);
+//#[derive(Serialize, Deserialize, Debug, Hash, Eq, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+pub struct Index<T: ?Sized>(u16, PhantomData<T>);
 
 impl<T> Index<T> {
-    pub fn new(value: u32) -> Self {
+    pub fn new(value: u16) -> Self {
         Index(value, PhantomData)
+    }
+
+    pub fn value(&self) -> &u16 {
+        &self.0
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct IndexMap<T>
 where
-    T: Eq + Hash,
+    T: Eq,
 {
-    elements: HashMap<Index<T>, T>,
-    idx_counter: u32,
+    elements: HashMap<u16, T>,
+    idx_counter: u16,
 }
 impl<T> IndexMap<T>
 where
-    T: Clone + Eq + Hash,
+    T: Clone + Eq,
 {
     pub fn new() -> Self {
         IndexMap {
@@ -90,19 +95,16 @@ where
     }
 
     pub fn add(&mut self, element: T) -> Index<T> {
+        
         self.idx_counter += 1;
-        let idx = Index::<T>::new(self.idx_counter);
+        let elements_index = self.idx_counter;
 
-        self.elements.insert(idx.clone(), element);
+        self.elements.insert(elements_index, element);
 
-        idx
+        Index::<T>::new(elements_index)
     }
 
-    // pub fn get(&self, idx: &Index<T>) -> Option<&T> {
-    //     self.elements.get(idx)
-    // }
-
     pub fn get_mut(&mut self, idx: &Index<T>) -> Option<&mut T> {
-        self.elements.get_mut(idx)
+        self.elements.get_mut(idx.value())
     }
 }

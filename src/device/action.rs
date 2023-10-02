@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use super::event::Event;
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Action {
     pub(crate) events: Vec<Index<Event>>,
 }

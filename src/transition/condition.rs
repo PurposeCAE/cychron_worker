@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{device::event::Event, session::Index};
 
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct EventDrivenCondition {
     event_idx: Index<Event>,
 }
@@ -13,7 +13,7 @@ impl EventDrivenCondition {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct CounterCondition {
     pub amount_iterations: u32,
 }

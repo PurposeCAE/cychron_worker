@@ -7,7 +7,7 @@ use self::action::Action;
 pub(crate) mod action;
 pub(crate) mod event;
 
-#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone, Hash)]
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone)]
 pub struct Device {
     actions: Vec<Index<Action>>,
 }

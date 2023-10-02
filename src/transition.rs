@@ -18,7 +18,7 @@ impl Transition {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 #[serde(tag = "type")]
 pub enum Condition {
     EEventDrivenCondition(EventDrivenCondition),
