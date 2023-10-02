@@ -1,22 +1,26 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use self::condition::{EventDrivenCondition, CounterCondition};
+use self::condition::{CounterCondition, EventDrivenCondition};
 
 pub mod condition;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Transition<'a>{
-    pub(crate) conditions: Condition<'a>,
+pub struct Transition {
+    pub(crate) conditions: Condition,
 }
-impl Transition<'_> {
+impl Transition {
+    pub fn new(conditions: Condition) -> Transition {
+        Transition { conditions }
+    }
+
     fn get_conditions(&self) -> &Condition {
         &self.conditions
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
 #[serde(tag = "type")]
-pub enum Condition<'a>{
-    EEventDrivenCondition(EventDrivenCondition<'a>),
+pub enum Condition {
+    EEventDrivenCondition(EventDrivenCondition),
     ECounterCondition(CounterCondition),
 }

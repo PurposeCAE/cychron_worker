@@ -1,25 +1,23 @@
 use serde::{Serialize, Deserialize};
 
-use crate::device::action::Action;
-
+use crate::{session::Index, device::action::Action};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Step<'a>{
-    action_ids: Vec<String>,
-
-    #[serde(skip)]
-    pub actions: Vec<&'a Action>,
+pub struct Step{
+    actions: Vec<Index<Action>>,
 }
 
-impl<'a> Step<'a>{
-    pub fn new() -> Step<'a> {
+impl Step{
+    pub fn new() -> Self {
         Step { 
             actions: Vec::new(),
-            action_ids: Vec::new(), 
         }
     }
-    pub fn add_action(&mut self, action: &'a Action) {
-        self.action_ids.push(action.id.clone());
-        self.actions.push(action.clone());
+
+    pub fn add_action(mut self, action_idx: Index<Action>) {
+        self.actions.push(action_idx);
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Hash, Eq, PartialEq)]
+pub struct StepIndex(u32);

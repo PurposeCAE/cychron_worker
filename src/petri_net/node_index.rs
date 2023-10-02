@@ -1,17 +1,18 @@
+use serde::{Serialize, Deserialize};
 
-
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NodeIndex{
-    index: u32,
+    node_index : petgraph::graph::NodeIndex,
 }
 
 impl NodeIndex{
-    fn new(counter: u32) -> Self {
+    pub fn new(node_index: petgraph::graph::NodeIndex) -> Self {
         NodeIndex{
-            index: counter,
+            node_index,
         }
     }
 
-    fn get_counter(&self) -> u32 {
-        self.index
+    pub fn get_node_index(&self) -> petgraph::graph::NodeIndex{
+        self.node_index.clone()
     }
 }

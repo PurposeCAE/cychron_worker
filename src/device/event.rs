@@ -1,20 +1,28 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::cmp::Eq;
+use std::hash::{Hash, Hasher};
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Event{
-    pub id: String,
-    pub action_id: String,
-    pub device_id: String,
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Event {
     pub rel_time: f64,
 }
 
 impl Event {
-    pub fn new(id: String, action_id: String, device_id: String, rel_time: f64) -> Event {
-        Event{
-            id,
-            action_id,
-            device_id,
-            rel_time,
-        }
+    pub fn new(rel_time: f64) -> Event {
+        Event { rel_time }
+    }
+}
+
+impl Eq for Event {}
+
+impl PartialEq for Event {
+    fn eq(&self, other: &Self) -> bool {
+        self.rel_time == other.rel_time
+    }
+}
+
+impl Hash for Event {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.rel_time.to_bits().hash(state);
     }
 }

@@ -1,31 +1,24 @@
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 
-use serde::{Serialize, Deserialize};
+use crate::session::Index;
 
 use self::action::Action;
 
-pub(crate) mod event;
 pub(crate) mod action;
+pub(crate) mod event;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Device{
-    id: String,
-    actions: HashMap<String, Action>,
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq, Clone, Hash)]
+pub struct Device {
+    actions: Vec<Index<Action>>,
 }
 
-impl Device{
-    pub fn new(id: String) -> Self{
-        Device{
-            id,
-            actions: HashMap::new(),
+impl Device {
+    pub fn new() -> Self {
+        Device {
+            actions: Vec::new(),
         }
     }
-    pub fn add_new_action(&mut self, action_id: String) -> &mut Action{
-
-        let action = Action::new(self.id.clone(), action_id.clone());
-
-        self.actions.insert(action_id.clone(), action);
-
-        self.actions.get_mut(&action_id).unwrap()
+    pub fn add_action(&mut self, action_idx: Index<Action>) {
+        self.actions.push(action_idx);
     }
 }

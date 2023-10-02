@@ -1,35 +1,19 @@
-use serde::{Serialize, Deserialize};
+use crate::session::Index;
+use serde::{Deserialize, Serialize};
 
 use super::event::Event;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Action{
-    pub(crate) events: Vec<Event>,
-
-    pub device_id: String,
-
-    pub id: String,
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Hash)]
+pub struct Action {
+    pub(crate) events: Vec<Index<Event>>,
 }
 
 impl Action {
-    pub fn new(device_id: String, id: String) -> Self {
-        Action {
-            events: Vec::new(),
-            device_id,
-            id,
-        }
+    pub fn new() -> Self {
+        Action { events: Vec::new() }
     }
 
-    pub fn add_event(&mut self, event_id: String, rel_time: f64) -> &Event {
-        let event = Event::new(
-            event_id,
-            self.device_id.clone(),
-            self.id.clone(),
-            rel_time,
-        );
-
-        self.events.push(event);
-
-        self.events.last().unwrap()
+    pub fn add_event(&mut self, event_idx: Index<Event>) {
+        self.events.push(event_idx);
     }
 }

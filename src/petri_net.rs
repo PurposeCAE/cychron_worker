@@ -1,69 +1,61 @@
-use std::borrow::BorrowMut;
+use serde::{Deserialize, Serialize};
 
-use serde::{Serialize, Deserialize};
-
-use crate::transition::Transition;
-
-use self::edge::Edge;
-use self::node::Node;
+use crate::session::IndexMap;
+use crate::transition::{Condition, Transition};
 
 use super::step::Step;
 
+mod edge;
+mod edge_index;
 pub mod node;
 mod node_index;
-mod edge;
-
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PetriNet<'a> {
-    petgraph : petgraph::graph::Graph<Step<'a>, Transition<'a>>,
+pub struct PetriNet {
+    petgraph: petgraph::graph::Graph<Step, Transition>,
 
     #[serde(skip)]
-    nodes: Vec<Node<'a>>,
+    nodes: Vec<self::node_index::NodeIndex>,
 
-    #[serde(skip)]
-    edges: Vec<Edge>,
-
-    counter: u32,
+    conditions: IndexMap<Condition>,
 }
 
-impl<'a> PetriNet<'a> {
-    pub fn new() -> PetriNet<'a> {
-        PetriNet{
+impl PetriNet {
+    pub fn new() -> PetriNet {
+        PetriNet {
             petgraph: petgraph::graph::Graph::new(),
             nodes: Vec::new(),
-            edges: Vec::new(),
-            counter: 0,
+            conditions: IndexMap::new(),
         }
     }
 
-    pub fn add_node(&'a mut self, node_data: Step<'a>) -> &mut Node<'a> {
+    pub fn add_node(&mut self, step: Step) -> node_index::NodeIndex {
+        let pet_node_index = self.petgraph.add_node(step);
+        let node_index = node_index::NodeIndex::new(pet_node_index);
 
-        let node_index = self.petgraph.add_node(node_data);
-        let node_data = &mut self.petgraph[node_index];
+        self.nodes.push(node_index.clone());
 
-        let node = Node::new(node_index, node_data);
-
-        self.nodes.push(node);
-        // self.nodes.last().unwrap()
-        self.nodes.last_mut().unwrap()
+        node_index
     }
-    
-    pub fn serialize(&self) -> String{
+
+    pub fn add_transition(
+        &mut self,
+        parent_node: node_index::NodeIndex,
+        child_node: node_index::NodeIndex,
+        transition: Transition,
+    ) -> edge_index::EdgeIndex {
+        let pet_parent_node_idx = parent_node.get_node_index();
+        let pet_child_node_idx = child_node.get_node_index();
+
+        let pet_edge_index =
+            self.petgraph
+                .add_edge(pet_parent_node_idx, pet_child_node_idx, transition);
+
+        edge_index::EdgeIndex::new(pet_edge_index)
+    }
+
+    pub fn serialize(&self) -> String {
         let serialized_graph = serde_json::to_string_pretty(&self.petgraph).unwrap();
         serialized_graph
-    }
-
-    pub fn add_edge(&mut self, parent: &Node, child: &Node, edge_data: Transition<'a>) -> &Edge {
-        let child_node_index = child.get_node_index();
-        let parent_node_index = parent.get_node_index();
-
-        let edge_index = self.petgraph.add_edge(*parent_node_index, *child_node_index, edge_data);
-        self.edges.push(Edge{edge_index});
-        self.edges.last().unwrap()
-    }
-
-    pub fn get_node_data<'b>(&'a mut self, node_index: &'b petgraph::prelude::NodeIndex) -> &'a mut Step {
-        &mut self.petgraph[*node_index]
     }
 }

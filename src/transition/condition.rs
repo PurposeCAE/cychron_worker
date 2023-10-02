@@ -1,25 +1,25 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::device::event::Event;
+use crate::{device::event::Event, session::Index};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct EventDrivenCondition<'a>{
-    pub event_id: String,
-
-    #[serde(skip)]
-    pub event: Option<&'a Event>,
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
+pub struct EventDrivenCondition {
+    event_idx: Index<Event>,
 }
 
-impl<'a> EventDrivenCondition<'a> {
-    pub fn new(event: &'a Event) -> EventDrivenCondition<'a> {
-        EventDrivenCondition {
-            event_id: event.id.clone(),
-            event: Some(event),
-        }
+impl EventDrivenCondition {
+    pub fn new(event_idx: Index<Event>) -> EventDrivenCondition {
+        EventDrivenCondition { event_idx }
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CounterCondition{
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone, Hash)]
+pub struct CounterCondition {
     pub amount_iterations: u32,
+}
+
+impl CounterCondition {
+    pub fn new(amount_iterations: u32) -> CounterCondition {
+        CounterCondition { amount_iterations }
+    }
 }
