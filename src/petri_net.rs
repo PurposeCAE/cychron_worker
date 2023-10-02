@@ -6,7 +6,6 @@ use super::step::Step;
 
 mod edge;
 mod edge_index;
-pub mod node;
 mod node_index;
 
 #[derive(Serialize, Deserialize, Debug)]
