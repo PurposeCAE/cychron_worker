@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::session::IndexMap;
-use crate::transition::{Condition, Transition};
+use crate::transition::Transition;
 
 use super::step::Step;
 
@@ -16,8 +15,6 @@ pub struct PetriNet {
 
     #[serde(skip)]
     nodes: Vec<self::node_index::NodeIndex>,
-
-    conditions: IndexMap<Condition>,
 }
 
 impl PetriNet {
@@ -25,7 +22,6 @@ impl PetriNet {
         PetriNet {
             petgraph: petgraph::graph::Graph::new(),
             nodes: Vec::new(),
-            conditions: IndexMap::new(),
         }
     }
 
@@ -52,10 +48,5 @@ impl PetriNet {
                 .add_edge(pet_parent_node_idx, pet_child_node_idx, transition);
 
         edge_index::EdgeIndex::new(pet_edge_index)
-    }
-
-    pub fn serialize(&self) -> String {
-        let serialized_graph = serde_json::to_string_pretty(&self.petgraph).unwrap();
-        serialized_graph
     }
 }

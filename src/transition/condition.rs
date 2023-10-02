@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{device::event::Event, session::Index};
+use crate::{device::event::Event, session::index::Index};
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct EventDrivenCondition {

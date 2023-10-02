@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use crate::{session::Index, device::action::Action};
+use crate::{session::index::Index, device::action::Action};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Step{

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::session::Index;
+use crate::session::index::Index;
 
 use self::action::Action;
 

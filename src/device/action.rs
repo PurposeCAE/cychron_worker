@@ -1,4 +1,4 @@
-use crate::session::Index;
+use crate::session::index::Index;
 use serde::{Deserialize, Serialize};
 
 use super::event::Event;
