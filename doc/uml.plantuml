@@ -21,8 +21,8 @@ class PetriNet{
 }
 PetriNet "1" --> "*" Step
 PetriNet "1" --> "*" Transition
-PetriNet "1" --> "*" NodeIndex
-PetriNet "1" --> "*" EdgeIndex
+PetriNet "1" --> "*" StepIndex
+PetriNet "1" --> "*" TransitionIndex
 
 class Device{
     - actions: Vec<Index<Action>>
@@ -54,9 +54,9 @@ class Transition{
 
 }
 
-class NodeIndex{
+class StepIndex{
 
 }
-class EdgeIndex{
+class TransitionIndex{
 
 }

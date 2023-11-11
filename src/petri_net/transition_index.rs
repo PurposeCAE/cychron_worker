@@ -1,13 +1,13 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct EdgeIndex{
+pub struct TransitionIndex{
     edge_index : petgraph::graph::EdgeIndex,
 }
 
-impl EdgeIndex{
+impl TransitionIndex{
     pub fn new(edge_index: petgraph::graph::EdgeIndex) -> Self {
-        EdgeIndex{
+        TransitionIndex{
             edge_index,
         }
     }

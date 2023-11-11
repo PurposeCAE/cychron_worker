@@ -1,13 +1,13 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct NodeIndex{
+pub struct StepIndex{
     node_index : petgraph::graph::NodeIndex,
 }
 
-impl NodeIndex{
+impl StepIndex{
     pub fn new(node_index: petgraph::graph::NodeIndex) -> Self {
-        NodeIndex{
+        StepIndex{
             node_index,
         }
     }
