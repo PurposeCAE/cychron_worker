@@ -4,7 +4,6 @@ use crate::transition::Transition;
 
 use super::step::Step;
 
-mod edge;
 mod edge_index;
 mod node_index;
 

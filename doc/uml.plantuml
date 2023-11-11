@@ -1,0 +1,62 @@
+@startuml uml
+
+class Session{
+    + new(): Session
+    + add_new_action(...): Index<Action>
+    + add_new_event(...): Index<Event>
+    + get_petri_net(): &mut PetriNet
+    + serialize_pretty(): String
+}
+Session "1" --> "1" PetriNet
+Session "1" --> "*" Device
+Session "1" --> "*" Action
+Session "1" --> "*" Event
+Session "1" --> "1" IndexMap
+
+class PetriNet{
+    + add_node(&mut self, step: Step): NodeIndex
+    + get_mut_step(&mut self, node_index: &node_index::NodeIndex): Option<&mut Step>
+    + add_transition(...): EdgeIndex
+    - petgraph: Graph<Step, Transition>
+}
+PetriNet "1" --> "*" Step
+PetriNet "1" --> "*" Transition
+PetriNet "1" --> "*" NodeIndex
+PetriNet "1" --> "*" EdgeIndex
+
+class Device{
+    - actions: Vec<Index<Action>>
+}
+
+class Action{
+    events: Vec<Index<Event>>
+}
+
+class Event{
+    rel_time: f64
+}
+
+class Index<T>{
+
+}
+
+class IndexMap<T>{
+    - elements: HashMap<u16, T>
+    + add(&mut self, T): Index<T>
+    + get_mut(&mut self, idx: &Index<T>):  Option<&mut T>
+}
+IndexMap "1" --> "*" Index
+
+class Step{
+    - actions: Vec<Index<Action>>
+}
+class Transition{
+
+}
+
+class NodeIndex{
+
+}
+class EdgeIndex{
+
+}
