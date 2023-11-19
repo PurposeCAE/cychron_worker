@@ -1,0 +1,14 @@
+syntax = "proto3";
+package session_grpc;
+
+service SessionGRPC {
+    rpc AddDevice (AddDeviceCommand) returns (AddDeviceResponse);
+}
+
+message AddDeviceCommand {
+    string name = 1;
+}
+
+message AddDeviceResponse {
+    uint32 id = 1;
+}

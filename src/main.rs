@@ -1,3 +1,45 @@
+#![allow(unused)]
+
+use serde::de;
+use std::sync::{Arc, Mutex};
+use tonic::{transport::Server, Request, Response, Status};
+use session_grpc::session_grpc_server::{SessionGrpc, SessionGrpcServer};
+use session_grpc::{AddDeviceCommand, AddDeviceResponse};
+pub mod session_grpc {
+    tonic::include_proto!("session_grpc");
+}
+
+#[derive(Debug)]
+pub struct SessionService {
+    session: Arc<Mutex<Session>>,
+}
+impl SessionService {
+    pub fn new() -> Self {
+        SessionService {
+            session: Arc::new(Mutex::new(Session::new())),
+        }
+    }
+}
+
+#[tonic::async_trait]
+impl SessionGrpc for SessionService {
+    async fn add_device(
+        &self,
+        request: Request<AddDeviceCommand>,
+    ) -> Result<Response<AddDeviceResponse>, Status> {
+        println!("Got a request: {:?}", request);
+        
+        let mut locked_session = self.session.lock().unwrap();
+        let device_idx = locked_session.new_device();
+        
+        let reply = session_grpc::AddDeviceResponse {
+            id: *device_idx.value() as u32,
+        };
+
+        Ok(Response::new(reply))
+    }
+}
+
 use crate::{session::Session, transition::{Condition, condition::EventDrivenCondition}};
 
 mod device;
@@ -6,7 +48,20 @@ mod session;
 mod step;
 mod transition;
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "[::1]:50051".parse()?;
+    let session_service = SessionService::new();
+
+    Server::builder()
+        .add_service(SessionGrpcServer::new(session_service))
+        .serve(addr)
+        .await?;
+
+    Ok(())
+}
+
+/* fn main() {
     let mut session = Session::new();
     let device_idx = session.new_device();
     let action_idx = session.add_new_action(&device_idx);
@@ -32,4 +87,4 @@ fn main() {
 
     let serialized_session = session.serialize_pretty();
     println!("{}", serialized_session);
-}
+} */
